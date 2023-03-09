@@ -1,3 +1,5 @@
-[debian]
+[web]
 deb2
+
+[proxy]
 deb3
