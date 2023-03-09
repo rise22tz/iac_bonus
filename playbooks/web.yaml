@@ -1,0 +1,38 @@
+---
+- name: web
+  hosts: web
+  tasks:
+
+    - name: APT update cache and make sure apache2 installed
+      become: yes
+      ansible.builtin.apt:
+        cache_valid_time: 86400
+        name: apache2
+        state: present
+
+    - name: upload index.html
+      become: yes
+      ansible.builtin.copy:
+        src: files/web/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+      notify:
+        - Restart apache
+
+    - name: apache2 service
+      become: yes
+      ansible.builtin.service:
+          name: apache2
+          enabled: yes
+          state: started
+  handlers:
+    - name: Restart apache
+      become: yes
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+
+
+...

@@ -3,3 +3,7 @@ deb2
 
 [proxy]
 deb3
+
+[debian]
+deb2
+deb3
