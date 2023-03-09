@@ -1,38 +1,39 @@
 ---
-- name: web
-  hosts: web
+- name: proxy
+  hosts: proxy
   tasks:
 
-    - name: APT update cache and make sure apache2 installed
+    - name: APT update cache and make sure haproxy installed
       become: yes
       ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: 86400
-        name: apache2
+        name: haproxy
         state: present
 
-    - name: upload index.html
+    - name: upload haproxy.cfg
       become: yes
       ansible.builtin.copy:
-        src: files/web/index.html
-        dest: /var/www/html/index.html
+        src: files/proxy/haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg
         owner: root
         group: root
-        mode: '0644'
+        mode: '0660'
+        validate: haproxy -f %s -c
       notify:
-        - Restart apache
+        - Restart haproxy
 
-    - name: apache2 service
+    - name: haproxy service
       become: yes
       ansible.builtin.service:
-          name: apache2
+          name: haproxy
           enabled: yes
           state: started
 
   handlers:
-    - name: Restart apache
+    - name: Restart haproxy
       become: yes
       ansible.builtin.service:
-        name: apache2
+        name: haproxy
         state: restarted
 ...
